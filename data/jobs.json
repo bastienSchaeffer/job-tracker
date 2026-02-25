@@ -1,0 +1,26 @@
+[
+  {
+    "company": "Company A",
+    "role": "Senior frontend",
+    "url": "https://google.com",
+    "status": "phone_screen",
+    "salaryMin": 50000,
+    "salaryMax": 60000,
+    "notes": "This is a very interesting opportunity\n\n## The phone screening\n\nit went well",
+    "dateApplied": "2026-02-18",
+    "id": "37f570e9-d3fa-4c76-94f3-ac1278011787",
+    "lastUpdated": "2026-02-25T10:34:57.216Z"
+  },
+  {
+    "company": "Davidson",
+    "role": "Senior React developer",
+    "url": "https://google.com",
+    "status": "rejected",
+    "salaryMin": 40000,
+    "salaryMax": 50000,
+    "notes": "Interesting but quite limited in terms of salary",
+    "dateApplied": "2026-02-12",
+    "id": "568258f4-2d0f-4c90-820a-d81e60ee3768",
+    "lastUpdated": "2026-02-25T10:34:29.678Z"
+  }
+]
