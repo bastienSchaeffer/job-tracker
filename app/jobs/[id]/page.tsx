@@ -6,33 +6,12 @@ import { StatusBadge } from "@/components/jobs/status-badge";
 import { JobDialog } from "@/components/jobs/job-dialog";
 import { DeleteJobButton } from "./delete-button";
 import { getJob } from "@/lib/db";
+import { formatSalary, formatDate } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 interface JobDetailPageProps {
   params: Promise<{ id: string }>;
-}
-
-function formatSalary(min: number | null, max: number | null): string {
-  if (!min && !max) return "Not specified";
-  const formatter = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  });
-  if (min && max) return `${formatter.format(min)} - ${formatter.format(max)}`;
-  if (min) return `From ${formatter.format(min)}`;
-  if (max) return `Up to ${formatter.format(max)}`;
-  return "Not specified";
-}
-
-function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
 }
 
 export default async function JobDetailPage({ params }: JobDetailPageProps) {
@@ -85,21 +64,23 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
           <CardHeader>
             <CardTitle className="text-lg">Details</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <dt className="text-sm text-muted-foreground">Salary Range</dt>
-              <dd className="font-medium">
-                {formatSalary(job.salaryMin, job.salaryMax)}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-sm text-muted-foreground">Date Applied</dt>
-              <dd className="font-medium">{formatDate(job.dateApplied)}</dd>
-            </div>
-            <div>
-              <dt className="text-sm text-muted-foreground">Last Updated</dt>
-              <dd className="font-medium">{formatDate(job.lastUpdated)}</dd>
-            </div>
+          <CardContent>
+            <dl className="space-y-4">
+              <div>
+                <dt className="text-sm text-muted-foreground">Salary Range</dt>
+                <dd className="font-medium">
+                  {formatSalary(job.salaryMin, job.salaryMax, "Not specified")}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-sm text-muted-foreground">Date Applied</dt>
+                <dd className="font-medium">{formatDate(job.dateApplied, "long")}</dd>
+              </div>
+              <div>
+                <dt className="text-sm text-muted-foreground">Last Updated</dt>
+                <dd className="font-medium">{formatDate(job.lastUpdated, "long")}</dd>
+              </div>
+            </dl>
           </CardContent>
         </Card>
 

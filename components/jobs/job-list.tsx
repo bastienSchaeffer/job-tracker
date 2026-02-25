@@ -9,7 +9,7 @@ export function JobList({ jobs }: JobListProps) {
   if (jobs.length === 0) {
     return (
       <div className="text-center py-12 text-muted-foreground">
-        <p>Sorry, no jobs found.</p>
+        <p>No jobs found.</p>
         <p className="text-sm mt-1">Add your first job application to get started.</p>
       </div>
     );
