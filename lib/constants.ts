@@ -30,3 +30,12 @@ export const STATUS_COLORS: Record<JobStatus, string> = {
   offer: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
   rejected: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
 };
+
+export const STATUS_CHART_COLORS: Record<JobStatus, string> = {
+  applied: "hsl(var(--chart-1))",
+  phone_screen: "hsl(var(--chart-2))",
+  technical: "hsl(var(--chart-3))",
+  onsite: "hsl(var(--chart-4))",
+  offer: "hsl(var(--chart-5))",
+  rejected: "hsl(var(--destructive))",
+};
