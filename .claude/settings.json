@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if cat | grep -q 'rm -rf'; then echo '⚠️  BLOCKED: rm -rf commands are not allowed for safety reasons'; exit 2; fi"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx tsc --noEmit --pretty 1>&2"
+          }
+        ]
+      }
+    ]
+  }
+}

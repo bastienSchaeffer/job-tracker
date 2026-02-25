@@ -1,3 +1,4 @@
+// Job tracker constants
 import type { JobStatus } from "./types";
 
 export const JOB_STATUSES: JobStatus[] = [
