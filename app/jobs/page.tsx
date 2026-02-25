@@ -1,8 +1,9 @@
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
-import { JobList } from "@/components/jobs/job-list";
+import { JobsView } from "@/components/jobs/jobs-view";
 import { JobDialog } from "@/components/jobs/job-dialog";
 import { StatusFilter } from "@/components/jobs/status-filter";
+import { SortToggle, type SortOrder } from "@/components/jobs/sort-toggle";
 import { getJobs } from "@/lib/db";
 import { JOB_STATUSES } from "@/lib/constants";
 import type { JobStatus } from "@/lib/types";
@@ -10,12 +11,13 @@ import type { JobStatus } from "@/lib/types";
 export const dynamic = "force-dynamic";
 
 interface JobsPageProps {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; sort?: string }>;
 }
 
 export default async function JobsPage({ searchParams }: JobsPageProps) {
   const params = await searchParams;
   const statusFilter = params.status as JobStatus | undefined;
+  const sortOrder = (params.sort as SortOrder) ?? "desc";
 
   let jobs = await getJobs();
 
@@ -23,10 +25,11 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
     jobs = jobs.filter((job) => job.status === statusFilter);
   }
 
-  jobs.sort(
-    (a, b) =>
-      new Date(b.dateApplied).getTime() - new Date(a.dateApplied).getTime()
-  );
+  jobs.sort((a, b) => {
+    const dateA = new Date(a.dateApplied).getTime();
+    const dateB = new Date(b.dateApplied).getTime();
+    return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
+  });
 
   return (
     <div className="space-y-6">
@@ -37,19 +40,19 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
             {jobs.length} job{jobs.length !== 1 ? "s" : ""} found
           </p>
         </div>
-        <JobDialog
-          mode="create"
-          trigger={<Button>Add Job</Button>}
-        />
+        <JobDialog mode="create" trigger={<Button>Add Job</Button>} />
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center gap-4">
         <Suspense fallback={null}>
           <StatusFilter />
         </Suspense>
+        <Suspense fallback={null}>
+          <SortToggle />
+        </Suspense>
       </div>
 
-      <JobList jobs={jobs} />
+      <JobsView jobs={jobs} />
     </div>
   );
 }
