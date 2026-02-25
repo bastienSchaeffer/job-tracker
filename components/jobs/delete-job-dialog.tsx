@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,14 +13,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import type { Job } from "@/lib/types";
 
-interface DeleteJobButtonProps {
-  jobId: string;
-  company: string;
-  role: string;
+interface DeleteJobDialogProps {
+  job: Job;
+  trigger: React.ReactNode;
+  onDeleted?: () => void;
 }
 
-export function DeleteJobButton({ jobId, company, role }: DeleteJobButtonProps) {
+export function DeleteJobDialog({
+  job,
+  trigger,
+  onDeleted,
+}: DeleteJobDialogProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -29,15 +33,17 @@ export function DeleteJobButton({ jobId, company, role }: DeleteJobButtonProps) 
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      const response = await fetch(`/api/jobs/${jobId}`, {
+      const response = await fetch(`/api/jobs/${job.id}`, {
         method: "DELETE",
       });
 
-      if (response.ok) {
-        setOpen(false);
-        router.push("/jobs");
-        router.refresh();
+      if (!response.ok) {
+        throw new Error("Failed to delete job");
       }
+
+      setOpen(false);
+      onDeleted?.();
+      router.refresh();
     } catch (error) {
       console.error("Failed to delete job:", error);
     } finally {
@@ -47,16 +53,14 @@ export function DeleteJobButton({ jobId, company, role }: DeleteJobButtonProps) 
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>
-        <Button variant="destructive">Delete</Button>
-      </AlertDialogTrigger>
+      <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Job Application</AlertDialogTitle>
           <AlertDialogDescription>
             Are you sure you want to delete the application for{" "}
-            <span className="font-medium text-foreground">{role}</span> at{" "}
-            <span className="font-medium text-foreground">{company}</span>?
+            <span className="font-medium text-foreground">{job.role}</span> at{" "}
+            <span className="font-medium text-foreground">{job.company}</span>?
             This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>

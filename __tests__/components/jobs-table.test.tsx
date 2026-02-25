@@ -1,7 +1,20 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { JobsTable } from "@/components/jobs/jobs-table";
 import type { Job } from "@/lib/types";
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    refresh: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    prefetch: vi.fn(),
+  }),
+  useSearchParams: () => new URLSearchParams(),
+  usePathname: () => "/jobs",
+}));
 
 const mockJobs: Job[] = [
   {
@@ -37,6 +50,7 @@ describe("JobsTable", () => {
     expect(screen.getByText("Role")).toBeInTheDocument();
     expect(screen.getByText("Status")).toBeInTheDocument();
     expect(screen.getByText("Date Applied")).toBeInTheDocument();
+    expect(screen.getByText("Actions")).toBeInTheDocument();
   });
 
   it("renders job data in rows", () => {
@@ -62,5 +76,13 @@ describe("JobsTable", () => {
     render(<JobsTable jobs={mockJobs} />);
     const stripeLink = screen.getByRole("link", { name: "Stripe" });
     expect(stripeLink).toHaveAttribute("href", "/jobs/1");
+  });
+
+  it("renders edit and delete buttons for each job", () => {
+    render(<JobsTable jobs={mockJobs} />);
+    const editButtons = screen.getAllByRole("button", { name: /edit/i });
+    const deleteButtons = screen.getAllByRole("button", { name: /delete/i });
+    expect(editButtons).toHaveLength(2);
+    expect(deleteButtons).toHaveLength(2);
   });
 });

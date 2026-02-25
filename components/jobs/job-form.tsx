@@ -33,6 +33,55 @@ export interface JobFormData {
   dateApplied: string;
 }
 
+interface FormErrors {
+  company?: string;
+  role?: string;
+  url?: string;
+  status?: string;
+  dateApplied?: string;
+  salary?: string;
+}
+
+function isValidUrl(url: string): boolean {
+  if (!url) return true;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function validateForm(data: JobFormData): FormErrors {
+  const errors: FormErrors = {};
+
+  if (!data.company.trim()) {
+    errors.company = "Company is required";
+  }
+
+  if (!data.role.trim()) {
+    errors.role = "Role is required";
+  }
+
+  if (data.url && !isValidUrl(data.url)) {
+    errors.url = "Please enter a valid URL (e.g., https://example.com)";
+  }
+
+  if (!data.dateApplied) {
+    errors.dateApplied = "Date applied is required";
+  }
+
+  if (
+    data.salaryMin !== null &&
+    data.salaryMax !== null &&
+    data.salaryMin > data.salaryMax
+  ) {
+    errors.salary = "Minimum salary cannot be greater than maximum salary";
+  }
+
+  return errors;
+}
+
 export function JobForm({
   job,
   onSubmit,
@@ -50,10 +99,30 @@ export function JobForm({
     dateApplied: job?.dateApplied ?? new Date().toISOString().split("T")[0],
   });
 
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<Set<string>>(new Set());
+
+  const handleBlur = (field: string) => {
+    setTouched((prev) => new Set(prev).add(field));
+    const newErrors = validateForm(formData);
+    setErrors(newErrors);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const validationErrors = validateForm(formData);
+    setErrors(validationErrors);
+    setTouched(new Set(Object.keys(formData)));
+
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
+
     await onSubmit(formData);
   };
+
+  const showError = (field: string) => touched.has(field) && errors[field as keyof FormErrors];
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -66,8 +135,12 @@ export function JobForm({
             onChange={(e) =>
               setFormData({ ...formData, company: e.target.value })
             }
-            required
+            onBlur={() => handleBlur("company")}
+            aria-invalid={showError("company") ? "true" : undefined}
           />
+          {showError("company") && (
+            <p className="text-sm text-destructive">{errors.company}</p>
+          )}
         </div>
         <div className="space-y-2">
           <Label htmlFor="role">Role *</Label>
@@ -75,8 +148,12 @@ export function JobForm({
             id="role"
             value={formData.role}
             onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-            required
+            onBlur={() => handleBlur("role")}
+            aria-invalid={showError("role") ? "true" : undefined}
           />
+          {showError("role") && (
+            <p className="text-sm text-destructive">{errors.role}</p>
+          )}
         </div>
       </div>
 
@@ -87,8 +164,13 @@ export function JobForm({
           type="url"
           value={formData.url}
           onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+          onBlur={() => handleBlur("url")}
           placeholder="https://..."
+          aria-invalid={showError("url") ? "true" : undefined}
         />
+        {showError("url") && (
+          <p className="text-sm text-destructive">{errors.url}</p>
+        )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -121,8 +203,12 @@ export function JobForm({
             onChange={(e) =>
               setFormData({ ...formData, dateApplied: e.target.value })
             }
-            required
+            onBlur={() => handleBlur("dateApplied")}
+            aria-invalid={showError("dateApplied") ? "true" : undefined}
           />
+          {showError("dateApplied") && (
+            <p className="text-sm text-destructive">{errors.dateApplied}</p>
+          )}
         </div>
       </div>
 
@@ -132,6 +218,7 @@ export function JobForm({
           <Input
             id="salaryMin"
             type="number"
+            min="0"
             value={formData.salaryMin ?? ""}
             onChange={(e) =>
               setFormData({
@@ -139,6 +226,7 @@ export function JobForm({
                 salaryMin: e.target.value ? Number(e.target.value) : null,
               })
             }
+            onBlur={() => handleBlur("salaryMin")}
             placeholder="e.g., 80000"
           />
         </div>
@@ -147,6 +235,7 @@ export function JobForm({
           <Input
             id="salaryMax"
             type="number"
+            min="0"
             value={formData.salaryMax ?? ""}
             onChange={(e) =>
               setFormData({
@@ -154,10 +243,14 @@ export function JobForm({
                 salaryMax: e.target.value ? Number(e.target.value) : null,
               })
             }
+            onBlur={() => handleBlur("salaryMax")}
             placeholder="e.g., 120000"
           />
         </div>
       </div>
+      {errors.salary && (
+        <p className="text-sm text-destructive">{errors.salary}</p>
+      )}
 
       <div className="space-y-2">
         <Label htmlFor="notes">Notes</Label>

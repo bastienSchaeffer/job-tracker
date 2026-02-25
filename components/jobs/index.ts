@@ -1,3 +1,4 @@
+export { DeleteJobDialog } from "./delete-job-dialog";
 export { JobCard } from "./job-card";
 export { JobDialog } from "./job-dialog";
 export { JobForm } from "./job-form";

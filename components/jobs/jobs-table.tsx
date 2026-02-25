@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { Pencil, Trash2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -7,7 +10,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "./status-badge";
+import { JobDialog } from "./job-dialog";
+import { DeleteJobDialog } from "./delete-job-dialog";
 import { formatDate } from "@/lib/utils";
 import type { Job } from "@/lib/types";
 
@@ -35,7 +41,8 @@ export function JobsTable({ jobs }: JobsTableProps) {
             <TableHead>Company</TableHead>
             <TableHead>Role</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead className="text-right">Date Applied</TableHead>
+            <TableHead>Date Applied</TableHead>
+            <TableHead className="w-[100px]">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -55,8 +62,37 @@ export function JobsTable({ jobs }: JobsTableProps) {
               <TableCell>
                 <StatusBadge status={job.status} />
               </TableCell>
-              <TableCell className="text-right text-muted-foreground">
+              <TableCell className="text-muted-foreground">
                 {formatDate(job.dateApplied)}
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-1">
+                  <JobDialog
+                    mode="edit"
+                    job={job}
+                    trigger={
+                      <Button
+                        variant="ghost"
+                        size="icon-xs"
+                        aria-label={`Edit ${job.role} at ${job.company}`}
+                      >
+                        <Pencil className="size-3" />
+                      </Button>
+                    }
+                  />
+                  <DeleteJobDialog
+                    job={job}
+                    trigger={
+                      <Button
+                        variant="ghost"
+                        size="icon-xs"
+                        aria-label={`Delete ${job.role} at ${job.company}`}
+                      >
+                        <Trash2 className="size-3" />
+                      </Button>
+                    }
+                  />
+                </div>
               </TableCell>
             </TableRow>
           ))}

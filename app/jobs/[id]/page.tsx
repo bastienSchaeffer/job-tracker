@@ -41,7 +41,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
             job={job}
             trigger={<Button variant="outline">Edit</Button>}
           />
-          <DeleteJobButton jobId={job.id} />
+          <DeleteJobButton jobId={job.id} company={job.company} role={job.role} />
         </div>
       </div>
 
