@@ -27,7 +27,7 @@ export function StatusFilter() {
 
   return (
     <Select value={currentStatus} onValueChange={handleChange}>
-      <SelectTrigger className="w-[180px]">
+      <SelectTrigger className="w-[180px]" aria-label="Filter jobs by status">
         <SelectValue placeholder="Filter by status" />
       </SelectTrigger>
       <SelectContent>

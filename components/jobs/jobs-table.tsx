@@ -35,7 +35,7 @@ export function JobsTable({ jobs }: JobsTableProps) {
 
   return (
     <div className="rounded-md border">
-      <Table>
+      <Table aria-label="Job applications list">
         <TableHeader>
           <TableRow>
             <TableHead>Company</TableHead>

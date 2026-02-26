@@ -54,7 +54,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
             rel="noopener noreferrer"
             className="text-sm text-primary hover:underline"
           >
-            View job posting &rarr;
+            View job posting <span className="sr-only">(opens in new tab)</span> &rarr;
           </a>
         )}
       </div>

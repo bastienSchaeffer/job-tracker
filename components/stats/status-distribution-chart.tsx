@@ -33,18 +33,22 @@ export function StatusDistributionChart({ data }: StatusDistributionChartProps) 
     );
   }
 
+  const chartDescription = `Status distribution: ${filteredData.map((d) => `${d.label}: ${d.count}`).join(", ")}`;
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Status Distribution</CardTitle>
       </CardHeader>
       <CardContent>
+        <p id="status-chart-desc" className="sr-only">{chartDescription}</p>
         <ResponsiveContainer width="100%" height={250}>
           <BarChart
             data={filteredData}
             layout="vertical"
             margin={{ top: 5, right: 40, left: 0, bottom: 5 }}
             aria-label="Status distribution bar chart"
+            aria-describedby="status-chart-desc"
           >
             <XAxis type="number" hide />
             <YAxis

@@ -32,6 +32,7 @@ export function PipelineTimeChart({ data }: PipelineTimeChartProps) {
   }
 
   const chartHeight = Math.max(300, data.length * 40);
+  const chartDescription = `Days in pipeline by company: ${data.map((d) => `${d.company}: ${d.days} days`).join(", ")}`;
 
   return (
     <Card>
@@ -39,12 +40,14 @@ export function PipelineTimeChart({ data }: PipelineTimeChartProps) {
         <CardTitle>Days in Pipeline by Company</CardTitle>
       </CardHeader>
       <CardContent>
+        <p id="pipeline-chart-desc" className="sr-only">{chartDescription}</p>
         <ResponsiveContainer width="100%" height={chartHeight}>
           <BarChart
             data={data}
             layout="vertical"
             margin={{ top: 5, right: 50, left: 0, bottom: 5 }}
             aria-label="Days in pipeline by company chart"
+            aria-describedby="pipeline-chart-desc"
           >
             <XAxis type="number" hide />
             <YAxis

@@ -31,17 +31,21 @@ export function ApplicationTimelineChart({ data }: ApplicationTimelineChartProps
     );
   }
 
+  const chartDescription = `Weekly applications: ${data.filter((d) => d.count > 0).map((d) => `Week of ${d.weekLabel}: ${d.count}`).join(", ")}`;
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Application Timeline</CardTitle>
       </CardHeader>
       <CardContent>
+        <p id="timeline-chart-desc" className="sr-only">{chartDescription}</p>
         <ResponsiveContainer width="100%" height={250}>
           <BarChart
             data={data}
             margin={{ top: 5, right: 5, left: -20, bottom: 5 }}
             aria-label="Weekly application timeline chart"
+            aria-describedby="timeline-chart-desc"
           >
             <XAxis
               dataKey="weekLabel"

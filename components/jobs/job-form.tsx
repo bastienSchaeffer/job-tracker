@@ -137,9 +137,10 @@ export function JobForm({
             }
             onBlur={() => handleBlur("company")}
             aria-invalid={showError("company") ? "true" : undefined}
+            aria-describedby={showError("company") ? "company-error" : undefined}
           />
           {showError("company") && (
-            <p className="text-sm text-destructive">{errors.company}</p>
+            <p id="company-error" className="text-sm text-destructive">{errors.company}</p>
           )}
         </div>
         <div className="space-y-2">
@@ -150,9 +151,10 @@ export function JobForm({
             onChange={(e) => setFormData({ ...formData, role: e.target.value })}
             onBlur={() => handleBlur("role")}
             aria-invalid={showError("role") ? "true" : undefined}
+            aria-describedby={showError("role") ? "role-error" : undefined}
           />
           {showError("role") && (
-            <p className="text-sm text-destructive">{errors.role}</p>
+            <p id="role-error" className="text-sm text-destructive">{errors.role}</p>
           )}
         </div>
       </div>
@@ -167,9 +169,10 @@ export function JobForm({
           onBlur={() => handleBlur("url")}
           placeholder="https://..."
           aria-invalid={showError("url") ? "true" : undefined}
+          aria-describedby={showError("url") ? "url-error" : undefined}
         />
         {showError("url") && (
-          <p className="text-sm text-destructive">{errors.url}</p>
+          <p id="url-error" className="text-sm text-destructive">{errors.url}</p>
         )}
       </div>
 
@@ -205,9 +208,10 @@ export function JobForm({
             }
             onBlur={() => handleBlur("dateApplied")}
             aria-invalid={showError("dateApplied") ? "true" : undefined}
+            aria-describedby={showError("dateApplied") ? "dateApplied-error" : undefined}
           />
           {showError("dateApplied") && (
-            <p className="text-sm text-destructive">{errors.dateApplied}</p>
+            <p id="dateApplied-error" className="text-sm text-destructive">{errors.dateApplied}</p>
           )}
         </div>
       </div>
@@ -228,6 +232,7 @@ export function JobForm({
             }
             onBlur={() => handleBlur("salaryMin")}
             placeholder="e.g., 80000"
+            aria-describedby={errors.salary ? "salary-error" : undefined}
           />
         </div>
         <div className="space-y-2">
@@ -245,11 +250,12 @@ export function JobForm({
             }
             onBlur={() => handleBlur("salaryMax")}
             placeholder="e.g., 120000"
+            aria-describedby={errors.salary ? "salary-error" : undefined}
           />
         </div>
       </div>
       {errors.salary && (
-        <p className="text-sm text-destructive">{errors.salary}</p>
+        <p id="salary-error" className="text-sm text-destructive">{errors.salary}</p>
       )}
 
       <div className="space-y-2">

@@ -19,7 +19,12 @@ export function SortToggle() {
   };
 
   return (
-    <Button variant="outline" size="sm" onClick={handleToggle}>
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={handleToggle}
+      aria-label={`Sort by date applied: currently showing ${currentSort === "desc" ? "newest first" : "oldest first"}. Click to show ${currentSort === "desc" ? "oldest first" : "newest first"}.`}
+    >
       {currentSort === "desc" ? (
         <>
           <ArrowDown className="mr-2 h-4 w-4" />
