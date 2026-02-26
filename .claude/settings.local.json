@@ -6,7 +6,10 @@
       "Bash(pnpm build:*)",
       "Bash(pnpm add:*)",
       "Bash(npx tsc:*)",
-      "Bash(npx shadcn@latest add toggle-group:*)"
+      "Bash(npx shadcn@latest add toggle-group:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git restore:*)"
     ]
   }
 }
