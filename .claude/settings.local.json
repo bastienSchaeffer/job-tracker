@@ -5,7 +5,8 @@
       "Bash(git push:*)",
       "Bash(pnpm build:*)",
       "Bash(pnpm add:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(npx shadcn@latest add toggle-group:*)"
     ]
   }
 }

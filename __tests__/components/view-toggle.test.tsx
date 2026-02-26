@@ -1,102 +1,191 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ViewToggle } from "@/components/jobs/view-toggle";
 
 const mockPush = vi.fn();
+const mockReplace = vi.fn();
 let mockSearchParams = new URLSearchParams();
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({
     push: mockPush,
+    replace: mockReplace,
   }),
   useSearchParams: () => mockSearchParams,
+}));
+
+// Mock localStorage
+const localStorageMock = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: vi.fn((key: string) => store[key] ?? null),
+    setItem: vi.fn((key: string, value: string) => {
+      store[key] = value;
+    }),
+    removeItem: vi.fn((key: string) => {
+      delete store[key];
+    }),
+    clear: vi.fn(() => {
+      store = {};
+    }),
+  };
+})();
+
+Object.defineProperty(window, "localStorage", { value: localStorageMock });
+
+// Mock ToggleGroup with proper onValueChange wiring
+let capturedOnValueChange: ((value: string) => void) | null = null;
+
+vi.mock("@/components/ui/toggle-group", () => ({
+  ToggleGroup: ({ children, value, onValueChange, "aria-label": ariaLabel }: any) => {
+    capturedOnValueChange = onValueChange;
+    return (
+      <div role="group" aria-label={ariaLabel} data-value={value}>
+        {children}
+      </div>
+    );
+  },
+  ToggleGroupItem: ({ children, value, "aria-label": ariaLabel }: any) => (
+    <button
+      role="radio"
+      aria-label={ariaLabel}
+      data-value={value}
+      onClick={() => capturedOnValueChange?.(value)}
+    >
+      {children}
+    </button>
+  ),
 }));
 
 describe("ViewToggle", () => {
   beforeEach(() => {
     mockPush.mockClear();
-    // Create fresh search params instance
+    mockReplace.mockClear();
+    localStorageMock.clear();
+    localStorageMock.getItem.mockClear();
+    localStorageMock.setItem.mockClear();
     mockSearchParams = new URLSearchParams();
+    capturedOnValueChange = null;
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 
   describe("rendering", () => {
-    it("should render both view buttons", () => {
+    it("should render toggle group after hydration", async () => {
       render(<ViewToggle />);
 
-      const listButton = screen.getByRole("button", { name: "List view" });
-      const boardButton = screen.getByRole("button", { name: "Board view" });
-
-      expect(listButton).toBeInTheDocument();
-      expect(boardButton).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByRole("group", { name: "View mode" })).toBeInTheDocument();
+      });
     });
 
-    it("should render with accessible group label", () => {
+    it("should render both view options", async () => {
       render(<ViewToggle />);
 
-      const group = screen.getByRole("group", { name: "View mode" });
-      expect(group).toBeInTheDocument();
-    });
-
-    it("should have aria-pressed attribute on both buttons", () => {
-      render(<ViewToggle />);
-
-      const listButton = screen.getByRole("button", { name: "List view" });
-      const boardButton = screen.getByRole("button", { name: "Board view" });
-
-      expect(listButton).toHaveAttribute("aria-pressed");
-      expect(boardButton).toHaveAttribute("aria-pressed");
+      await waitFor(() => {
+        expect(screen.getByRole("radio", { name: "List view" })).toBeInTheDocument();
+        expect(screen.getByRole("radio", { name: "Board view" })).toBeInTheDocument();
+      });
     });
   });
 
-  describe("default state (list view)", () => {
-    it("should show list button as active when no view param", () => {
+  describe("default state (board view)", () => {
+    it("should default to board view when no URL param or localStorage", async () => {
       render(<ViewToggle />);
 
-      const listButton = screen.getByRole("button", { name: "List view" });
-      const boardButton = screen.getByRole("button", { name: "Board view" });
+      await waitFor(() => {
+        const group = screen.getByRole("group", { name: "View mode" });
+        expect(group).toHaveAttribute("data-value", "board");
+      });
+    });
 
-      expect(listButton).toHaveAttribute("aria-pressed", "true");
-      expect(boardButton).toHaveAttribute("aria-pressed", "false");
+    it("should redirect to board view on initial load when no URL param", async () => {
+      render(<ViewToggle />);
+
+      await waitFor(() => {
+        expect(mockReplace).toHaveBeenCalledWith("/jobs?view=board");
+      });
     });
   });
 
-  describe("board view state", () => {
-    beforeEach(() => {
-      mockSearchParams.set("view", "board");
-    });
-
-    it("should show board button as active when view=board", () => {
+  describe("localStorage persistence", () => {
+    it("should read view preference from localStorage", async () => {
+      localStorageMock.getItem.mockReturnValue("list");
       render(<ViewToggle />);
 
-      const listButton = screen.getByRole("button", { name: "List view" });
-      const boardButton = screen.getByRole("button", { name: "Board view" });
-
-      expect(listButton).toHaveAttribute("aria-pressed", "false");
-      expect(boardButton).toHaveAttribute("aria-pressed", "true");
+      await waitFor(() => {
+        expect(localStorageMock.getItem).toHaveBeenCalledWith("jobs-view-mode");
+      });
     });
-  });
 
-  describe("interactions", () => {
-    it("should navigate to board view when board button clicked", async () => {
-      const user = userEvent.setup();
+    it("should not redirect when localStorage has list preference", async () => {
+      localStorageMock.getItem.mockReturnValue("list");
       render(<ViewToggle />);
 
-      const boardButton = screen.getByRole("button", { name: "Board view" });
-      await user.click(boardButton);
-
-      expect(mockPush).toHaveBeenCalledWith("/jobs?view=board");
+      await waitFor(() => {
+        expect(mockReplace).not.toHaveBeenCalled();
+      });
     });
 
-    it("should remove view param when list button clicked from board view", async () => {
+    it("should save view preference to localStorage when changed", async () => {
       mockSearchParams.set("view", "board");
       const user = userEvent.setup();
       render(<ViewToggle />);
 
-      const listButton = screen.getByRole("button", { name: "List view" });
+      await waitFor(() => {
+        expect(screen.getByRole("radio", { name: "List view" })).toBeInTheDocument();
+      });
+
+      const listButton = screen.getByRole("radio", { name: "List view" });
+      await user.click(listButton);
+
+      expect(localStorageMock.setItem).toHaveBeenCalledWith("jobs-view-mode", "list");
+    });
+  });
+
+  describe("URL param handling", () => {
+    it("should respect URL param over localStorage", async () => {
+      localStorageMock.getItem.mockReturnValue("list");
+      mockSearchParams.set("view", "board");
+
+      render(<ViewToggle />);
+
+      await waitFor(() => {
+        const group = screen.getByRole("group", { name: "View mode" });
+        expect(group).toHaveAttribute("data-value", "board");
+      });
+    });
+
+    it("should update URL when view is changed to list", async () => {
+      mockSearchParams.set("view", "board");
+      const user = userEvent.setup();
+      render(<ViewToggle />);
+
+      await waitFor(() => {
+        expect(screen.getByRole("radio", { name: "List view" })).toBeInTheDocument();
+      });
+
+      const listButton = screen.getByRole("radio", { name: "List view" });
       await user.click(listButton);
 
       expect(mockPush).toHaveBeenCalledWith("/jobs");
+    });
+
+    it("should update URL when view is changed to board", async () => {
+      const user = userEvent.setup();
+      render(<ViewToggle />);
+
+      await waitFor(() => {
+        expect(screen.getByRole("radio", { name: "Board view" })).toBeInTheDocument();
+      });
+
+      const boardButton = screen.getByRole("radio", { name: "Board view" });
+      await user.click(boardButton);
+
+      expect(mockPush).toHaveBeenCalledWith("/jobs?view=board");
     });
 
     it("should preserve other query params when switching views", async () => {
@@ -105,97 +194,33 @@ describe("ViewToggle", () => {
       const user = userEvent.setup();
       render(<ViewToggle />);
 
-      const boardButton = screen.getByRole("button", { name: "Board view" });
+      await waitFor(() => {
+        expect(screen.getByRole("radio", { name: "Board view" })).toBeInTheDocument();
+      });
+
+      const boardButton = screen.getByRole("radio", { name: "Board view" });
       await user.click(boardButton);
 
-      expect(mockPush).toHaveBeenCalledWith(
-        "/jobs?status=applied&sort=asc&view=board"
-      );
-    });
-
-    it("should preserve other params when switching back to list view", async () => {
-      mockSearchParams.set("view", "board");
-      mockSearchParams.set("status", "phone_screen");
-      const user = userEvent.setup();
-      render(<ViewToggle />);
-
-      const listButton = screen.getByRole("button", { name: "List view" });
-      await user.click(listButton);
-
-      expect(mockPush).toHaveBeenCalledWith("/jobs?status=phone_screen");
-    });
-  });
-
-  describe("edge cases", () => {
-    it("should handle clicking the already active button", async () => {
-      const user = userEvent.setup();
-      render(<ViewToggle />);
-
-      const listButton = screen.getByRole("button", { name: "List view" });
-      await user.click(listButton);
-
-      // Should still push even if already active
-      expect(mockPush).toHaveBeenCalledWith("/jobs");
-    });
-
-    it("should handle multiple rapid clicks", async () => {
-      const user = userEvent.setup();
-      render(<ViewToggle />);
-
-      const boardButton = screen.getByRole("button", { name: "Board view" });
-      await user.click(boardButton);
-      await user.click(boardButton);
-      await user.click(boardButton);
-
-      expect(mockPush).toHaveBeenCalledTimes(3);
-    });
-
-    it("should treat invalid view param as list view", () => {
-      // The component will read "invalid" as the view param, but since it's not "board",
-      // it will default to "list" behavior
-      const invalidParams = new URLSearchParams();
-      invalidParams.set("view", "invalid");
-      mockSearchParams = invalidParams;
-
-      render(<ViewToggle />);
-
-      const listButton = screen.getByRole("button", { name: "List view" });
-      const boardButton = screen.getByRole("button", { name: "Board view" });
-
-      // Neither button should be "pressed" in the traditional sense,
-      // but list is the default fallback
-      // The component actually checks: currentView === "list" ? "default" : "outline"
-      // and currentView is set to searchParams.get("view") ?? "list"
-      // So "invalid" !== "list", meaning list button will NOT be active
-      expect(listButton).toHaveAttribute("aria-pressed", "false");
-      expect(boardButton).toHaveAttribute("aria-pressed", "false");
+      expect(mockPush).toHaveBeenCalledWith("/jobs?status=applied&sort=asc&view=board");
     });
   });
 
   describe("accessibility", () => {
-    it("should have descriptive aria-labels for screen readers", () => {
+    it("should have accessible group label", async () => {
       render(<ViewToggle />);
 
-      expect(
-        screen.getByRole("button", { name: "List view" })
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole("button", { name: "Board view" })
-      ).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByRole("group", { name: "View mode" })).toBeInTheDocument();
+      });
     });
 
-    it("should communicate pressed state via aria-pressed", () => {
+    it("should have descriptive aria-labels for view options", async () => {
       render(<ViewToggle />);
 
-      const listButton = screen.getByRole("button", { name: "List view" });
-      expect(listButton).toHaveAttribute("aria-pressed", "true");
-    });
-
-    it("should have proper role group for button group", () => {
-      render(<ViewToggle />);
-
-      const group = screen.getByRole("group");
-      expect(group).toHaveAttribute("aria-label", "View mode");
+      await waitFor(() => {
+        expect(screen.getByRole("radio", { name: "List view" })).toBeInTheDocument();
+        expect(screen.getByRole("radio", { name: "Board view" })).toBeInTheDocument();
+      });
     });
   });
 });

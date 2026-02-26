@@ -19,7 +19,7 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
   const params = await searchParams;
   const statusFilter = params.status as JobStatus | undefined;
   const sortOrder = (params.sort as SortOrder) ?? "desc";
-  const viewMode = (params.view as JobsViewMode) ?? "list";
+  const viewMode = (params.view as JobsViewMode) ?? "board";
 
   let jobs = await getJobs();
 
