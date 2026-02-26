@@ -4,20 +4,22 @@ import { JobsView } from "@/components/jobs/jobs-view";
 import { JobDialog } from "@/components/jobs/job-dialog";
 import { StatusFilter } from "@/components/jobs/status-filter";
 import { SortToggle, type SortOrder } from "@/components/jobs/sort-toggle";
+import { ViewToggle } from "@/components/jobs/view-toggle";
 import { getJobs } from "@/lib/db";
 import { JOB_STATUSES } from "@/lib/constants";
-import type { JobStatus } from "@/lib/types";
+import type { JobStatus, JobsViewMode } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 interface JobsPageProps {
-  searchParams: Promise<{ status?: string; sort?: string }>;
+  searchParams: Promise<{ status?: string; sort?: string; view?: string }>;
 }
 
 export default async function JobsPage({ searchParams }: JobsPageProps) {
   const params = await searchParams;
   const statusFilter = params.status as JobStatus | undefined;
   const sortOrder = (params.sort as SortOrder) ?? "desc";
+  const viewMode = (params.view as JobsViewMode) ?? "list";
 
   let jobs = await getJobs();
 
@@ -50,9 +52,12 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
         <Suspense fallback={null}>
           <SortToggle />
         </Suspense>
+        <Suspense fallback={null}>
+          <ViewToggle />
+        </Suspense>
       </div>
 
-      <JobsView jobs={jobs} />
+      <JobsView jobs={jobs} viewMode={viewMode} />
     </div>
   );
 }

@@ -3,7 +3,9 @@
     "allow": [
       "Bash(pnpm test:run:*)",
       "Bash(git push:*)",
-      "Bash(pnpm build:*)"
+      "Bash(pnpm build:*)",
+      "Bash(pnpm add:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

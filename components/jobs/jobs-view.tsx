@@ -1,12 +1,18 @@
 import { JobsTable } from "./jobs-table";
 import { JobList } from "./job-list";
-import type { Job } from "@/lib/types";
+import { KanbanBoard } from "./kanban-board";
+import type { Job, JobsViewMode } from "@/lib/types";
 
 interface JobsViewProps {
   jobs: Job[];
+  viewMode?: JobsViewMode;
 }
 
-export function JobsView({ jobs }: JobsViewProps) {
+export function JobsView({ jobs, viewMode = "list" }: JobsViewProps) {
+  if (viewMode === "board") {
+    return <KanbanBoard jobs={jobs} />;
+  }
+
   return (
     <>
       {/* Mobile: Card view */}

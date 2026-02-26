@@ -126,3 +126,16 @@ export interface ExtendedJobStats extends JobStats {
   applicationsByWeek: WeeklyApplications[];
   timeByCompany: CompanyPipelineTime[];
 }
+
+/**
+ * View mode for displaying jobs.
+ * @value "list" - Traditional list/table view
+ * @value "board" - Kanban board view
+ */
+export type JobsViewMode = "list" | "board";
+
+/**
+ * Jobs organized by status for the Kanban board view.
+ * Maps each status to an array of jobs at that status.
+ */
+export type JobsByStatus = Record<JobStatus, Job[]>
