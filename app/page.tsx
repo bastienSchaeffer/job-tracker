@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { JobCard } from "@/components/jobs/job-card";
 import { JobDialog } from "@/components/jobs/job-dialog";
+import { SeedDataButton } from "@/components/seed-data-button";
 import { getJobs } from "@/lib/db";
 import { JOB_STATUSES, STATUS_LABELS } from "@/lib/constants";
 import type { JobStatus } from "@/lib/types";
@@ -75,8 +76,11 @@ export default async function DashboardPage() {
           </div>
         ) : (
           <Card>
-            <CardContent className="py-12 text-center text-muted-foreground">
-              <p>No jobs yet. Add your first job application to get started.</p>
+            <CardContent className="py-12 text-center">
+              <p className="text-muted-foreground mb-4">
+                No jobs yet. Add your first job application or load sample data to get started.
+              </p>
+              <SeedDataButton />
             </CardContent>
           </Card>
         )}
