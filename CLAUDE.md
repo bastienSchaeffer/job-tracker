@@ -143,3 +143,16 @@ interface Job {
 | GET | `/api/jobs/[id]` | Get single job |
 | PUT | `/api/jobs/[id]` | Update job |
 | DELETE | `/api/jobs/[id]` | Delete job |
+
+
+## Agent Delegation Rules
+
+- Use component-creator for all new React component creation
+- Use test-writer for ALL test-related tasks (writing, fixing, updating tests)
+- Use docs-generator for documentation, README updates, and JSDoc comments
+- Use code-reviewer (from Day 1) for code quality reviews
+- When implementing a new feature:
+  1. Plan the approach first (plan mode)
+  2. Build components via component-creator
+  3. Write tests via test-writer
+  4. Update docs via docs-generator

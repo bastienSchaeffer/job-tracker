@@ -1,6 +1,9 @@
-// Job tracker constants
 import type { JobStatus } from "./types";
 
+/**
+ * All possible job statuses in the hiring pipeline, ordered by progression.
+ * Used for dropdowns, filters, and validation.
+ */
 export const JOB_STATUSES: JobStatus[] = [
   "applied",
   "phone_screen",
@@ -10,6 +13,10 @@ export const JOB_STATUSES: JobStatus[] = [
   "rejected",
 ];
 
+/**
+ * Human-readable labels for each job status.
+ * Maps status keys to display-friendly text.
+ */
 export const STATUS_LABELS: Record<JobStatus, string> = {
   applied: "Applied",
   phone_screen: "Phone Screen",
@@ -19,6 +26,10 @@ export const STATUS_LABELS: Record<JobStatus, string> = {
   rejected: "Rejected",
 };
 
+/**
+ * Tailwind CSS classes for status badges with light/dark mode support.
+ * Each status has distinct background and text colors.
+ */
 export const STATUS_COLORS: Record<JobStatus, string> = {
   applied: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
   phone_screen:
@@ -31,6 +42,10 @@ export const STATUS_COLORS: Record<JobStatus, string> = {
   rejected: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
 };
 
+/**
+ * Chart-specific color values using CSS custom properties.
+ * Maps status to hsl() color values from the theme's chart palette.
+ */
 export const STATUS_CHART_COLORS: Record<JobStatus, string> = {
   applied: "hsl(var(--chart-1))",
   phone_screen: "hsl(var(--chart-2))",
