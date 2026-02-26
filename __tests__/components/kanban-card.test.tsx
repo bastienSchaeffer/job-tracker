@@ -136,7 +136,7 @@ describe("KanbanCard", () => {
         <KanbanCard job={job} index={0} isPending={true} />
       );
 
-      const card = container.querySelector('[role="option"]');
+      const card = container.querySelector('[data-slot="card"]');
       expect(card).toHaveClass("opacity-50");
     });
 
@@ -146,7 +146,7 @@ describe("KanbanCard", () => {
         <KanbanCard job={job} index={0} isPending={false} />
       );
 
-      const card = container.querySelector('[role="option"]');
+      const card = container.querySelector('[data-slot="card"]');
       expect(card).not.toHaveClass("opacity-50");
     });
 
@@ -154,21 +154,31 @@ describe("KanbanCard", () => {
       const job = createMockJob();
       const { container } = render(<KanbanCard job={job} index={0} />);
 
-      const card = container.querySelector('[role="option"]');
+      const card = container.querySelector('[data-slot="card"]');
       expect(card).not.toHaveClass("opacity-50");
+    });
+
+    it("should set aria-busy when isPending is true", () => {
+      const job = createMockJob();
+      const { container } = render(
+        <KanbanCard job={job} index={0} isPending={true} />
+      );
+
+      const card = container.querySelector('[data-slot="card"]');
+      expect(card).toHaveAttribute("aria-busy", "true");
     });
   });
 
   describe("accessibility", () => {
-    it("should have role='option' for listbox semantics", () => {
-      const job = createMockJob();
+    it("should have separate drag handle with aria-label", () => {
+      const job = createMockJob({ company: "Test Co", role: "Engineer" });
       render(<KanbanCard job={job} index={0} />);
 
-      const card = screen.getByRole("option");
-      expect(card).toBeInTheDocument();
+      const dragHandle = screen.getByLabelText(/Drag handle for Test Co - Engineer/);
+      expect(dragHandle).toBeInTheDocument();
     });
 
-    it("should have descriptive aria-label", () => {
+    it("should have descriptive aria-label on the link", () => {
       const job = createMockJob({
         role: "Backend Engineer",
         company: "Data Corp",
@@ -176,19 +186,19 @@ describe("KanbanCard", () => {
       });
       render(<KanbanCard job={job} index={0} />);
 
-      const card = screen.getByRole("option");
-      expect(card).toHaveAttribute(
+      const link = screen.getByRole("link");
+      expect(link).toHaveAttribute(
         "aria-label",
-        "Backend Engineer at Data Corp, applied 6 days ago"
+        "View details for Backend Engineer at Data Corp, applied 6 days ago"
       );
     });
 
-    it("should include days in aria-label", () => {
+    it("should include days in link aria-label", () => {
       const job = createMockJob({ dateApplied: "2026-02-25" });
       render(<KanbanCard job={job} index={0} />);
 
       expect(
-        screen.getByLabelText(/applied 1 days ago/)
+        screen.getByLabelText(/applied 1 day ago/)
       ).toBeInTheDocument();
     });
   });

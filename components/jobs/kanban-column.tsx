@@ -19,8 +19,8 @@ export function KanbanColumn({ status, jobs, pendingJobIds }: KanbanColumnProps)
   return (
     <div
       className="flex flex-col w-72 shrink-0 md:w-auto"
-      role="listbox"
-      aria-label={`${label} column with ${jobs.length} jobs`}
+      role="region"
+      aria-label={`${label} column with ${jobs.length} ${jobs.length === 1 ? "job" : "jobs"}`}
     >
       <div className="flex items-center justify-between mb-3 px-1">
         <h3 className="font-medium text-sm">{label}</h3>

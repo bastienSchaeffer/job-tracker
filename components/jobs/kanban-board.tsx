@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
 import { KanbanColumn } from "./kanban-column";
-import { JOB_STATUSES } from "@/lib/constants";
+import { JOB_STATUSES, STATUS_LABELS } from "@/lib/constants";
 import type { Job, JobStatus, JobsByStatus } from "@/lib/types";
 
 interface KanbanBoardProps {
@@ -28,6 +28,7 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
     groupJobsByStatus(jobs)
   );
   const [pendingUpdates, setPendingUpdates] = useState<Set<string>>(new Set());
+  const [announcement, setAnnouncement] = useState<string>("");
 
   const onDragEnd = useCallback(
     async (result: DropResult) => {
@@ -73,6 +74,9 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
       // Only make API call if status changed
       if (sourceStatus !== destStatus) {
         setPendingUpdates((prev) => new Set(prev).add(jobId));
+        setAnnouncement(
+          `Moving ${job.company} - ${job.role} from ${STATUS_LABELS[sourceStatus]} to ${STATUS_LABELS[destStatus]}`
+        );
 
         try {
           const response = await fetch(`/api/jobs/${jobId}`, {
@@ -85,10 +89,16 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
             throw new Error("Failed to update job status");
           }
 
+          setAnnouncement(
+            `Moved ${job.company} - ${job.role} to ${STATUS_LABELS[destStatus]}`
+          );
           router.refresh();
         } catch {
           // Rollback on error
           setJobsByStatus(previousJobsByStatus);
+          setAnnouncement(
+            `Failed to move ${job.company} - ${job.role}. Reverted to ${STATUS_LABELS[sourceStatus]}`
+          );
         } finally {
           setPendingUpdates((prev) => {
             const next = new Set(prev);
@@ -116,6 +126,15 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
             pendingJobIds={pendingUpdates}
           />
         ))}
+      </div>
+      {/* Live region for screen reader announcements */}
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {announcement}
       </div>
     </DragDropContext>
   );

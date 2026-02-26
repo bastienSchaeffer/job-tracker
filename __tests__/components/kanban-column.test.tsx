@@ -100,8 +100,8 @@ describe("KanbanColumn", () => {
     });
   });
 
-  describe("listbox semantics", () => {
-    it("should have role='listbox'", () => {
+  describe("region semantics", () => {
+    it("should have role='region'", () => {
       render(
         <KanbanColumn
           status="applied"
@@ -110,8 +110,8 @@ describe("KanbanColumn", () => {
         />
       );
 
-      const listbox = screen.getByRole("listbox");
-      expect(listbox).toBeInTheDocument();
+      const region = screen.getByRole("region");
+      expect(region).toBeInTheDocument();
     });
 
     it("should have descriptive aria-label with status and count", () => {
@@ -125,14 +125,14 @@ describe("KanbanColumn", () => {
         />
       );
 
-      const listbox = screen.getByRole("listbox");
-      expect(listbox).toHaveAttribute(
+      const region = screen.getByRole("region");
+      expect(region).toHaveAttribute(
         "aria-label",
         "Technical column with 2 jobs"
       );
     });
 
-    it("should update aria-label for single job", () => {
+    it("should use singular 'job' for single job count", () => {
       const jobs = [createMockJob()];
 
       render(
@@ -143,8 +143,8 @@ describe("KanbanColumn", () => {
         />
       );
 
-      const listbox = screen.getByRole("listbox");
-      expect(listbox).toHaveAttribute("aria-label", "Offer column with 1 jobs");
+      const region = screen.getByRole("region");
+      expect(region).toHaveAttribute("aria-label", "Offer column with 1 job");
     });
   });
 
@@ -336,7 +336,7 @@ describe("KanbanColumn", () => {
         );
 
         expect(screen.getByText(label)).toBeInTheDocument();
-        expect(screen.getByRole("listbox")).toHaveAttribute(
+        expect(screen.getByRole("region")).toHaveAttribute(
           "aria-label",
           `${label} column with 0 jobs`
         );
