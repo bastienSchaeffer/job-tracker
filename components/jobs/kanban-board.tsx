@@ -76,14 +76,20 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
       setJobsByStatus((prev) => {
         const newState = { ...prev };
 
-        // Remove from source
-        newState[sourceStatus] = prev[sourceStatus].filter((j) => j.id !== jobId);
-
-        // Add to destination
-        const updatedJob = { ...job, status: destStatus };
-        const destJobs = [...prev[destStatus]];
-        destJobs.splice(destination.index, 0, updatedJob);
-        newState[destStatus] = destJobs;
+        if (sourceStatus === destStatus) {
+          // Reordering within the same column
+          const columnJobs = [...prev[sourceStatus]];
+          const [movedJob] = columnJobs.splice(source.index, 1);
+          columnJobs.splice(destination.index, 0, movedJob);
+          newState[sourceStatus] = columnJobs;
+        } else {
+          // Moving between columns
+          newState[sourceStatus] = prev[sourceStatus].filter((j) => j.id !== jobId);
+          const updatedJob = { ...job, status: destStatus };
+          const destJobs = [...prev[destStatus]];
+          destJobs.splice(destination.index, 0, updatedJob);
+          newState[destStatus] = destJobs;
+        }
 
         return newState;
       });
