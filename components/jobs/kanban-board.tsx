@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
 import { KanbanColumn } from "./kanban-column";
@@ -22,6 +22,13 @@ function groupJobsByStatus(jobs: Job[]): JobsByStatus {
   return grouped;
 }
 
+function getJobsFingerprint(jobs: Job[]): string {
+  return jobs
+    .map((j) => `${j.id}:${j.status}`)
+    .sort()
+    .join(",");
+}
+
 export function KanbanBoard({ jobs }: KanbanBoardProps) {
   const router = useRouter();
   const [jobsByStatus, setJobsByStatus] = useState<JobsByStatus>(() =>
@@ -29,6 +36,16 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
   );
   const [pendingUpdates, setPendingUpdates] = useState<Set<string>>(new Set());
   const [announcement, setAnnouncement] = useState<string>("");
+  const lastFingerprintRef = useRef<string>(getJobsFingerprint(jobs));
+
+  // Sync state with props when jobs change (e.g., filtering, external updates)
+  useEffect(() => {
+    const newFingerprint = getJobsFingerprint(jobs);
+    if (newFingerprint !== lastFingerprintRef.current) {
+      lastFingerprintRef.current = newFingerprint;
+      setJobsByStatus(groupJobsByStatus(jobs));
+    }
+  }, [jobs]);
 
   const onDragEnd = useCallback(
     async (result: DropResult) => {
