@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createJob, getJobs } from "@/lib/db";
+import { createJobs, getJobs } from "@/lib/db";
 import { SEED_JOBS } from "@/lib/seed-data";
 
 export async function POST() {
@@ -13,9 +13,8 @@ export async function POST() {
       );
     }
 
-    const createdJobs = await Promise.all(
-      SEED_JOBS.map((job) => createJob(job))
-    );
+    // Use bulk create to avoid race conditions from concurrent writes
+    const createdJobs = await createJobs(SEED_JOBS);
 
     return NextResponse.json({
       message: `Successfully created ${createdJobs.length} sample jobs`,

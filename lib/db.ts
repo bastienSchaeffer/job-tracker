@@ -147,3 +147,24 @@ export async function deleteJob(id: string): Promise<boolean> {
   await writeJobs(jobs);
   return true;
 }
+
+/**
+ * Creates multiple job records in a single atomic write operation.
+ * Avoids race conditions that occur with concurrent individual writes.
+ * @param inputs - Array of job data to create
+ * @returns Promise resolving to array of created jobs
+ */
+export async function createJobs(inputs: JobCreateInput[]): Promise<Job[]> {
+  const jobs = await readJobs();
+  const now = new Date().toISOString();
+
+  const newJobs: Job[] = inputs.map((input) => ({
+    ...input,
+    id: crypto.randomUUID(),
+    lastUpdated: now,
+  }));
+
+  jobs.push(...newJobs);
+  await writeJobs(jobs);
+  return newJobs;
+}
