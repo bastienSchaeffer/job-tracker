@@ -13,7 +13,11 @@ export async function GET(request: Request) {
     jobs = jobs.filter((job) => job.status === status);
   }
 
-  return NextResponse.json(jobs);
+  return NextResponse.json(jobs, {
+    headers: {
+      "Cache-Control": "private, max-age=10, stale-while-revalidate=60",
+    },
+  });
 }
 
 export async function POST(request: Request) {

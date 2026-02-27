@@ -7,9 +7,9 @@
     "salaryMin": 180000,
     "salaryMax": 220000,
     "notes": "Technical interview scheduled. Focus on React and TypeScript.",
-    "dateApplied": "2026-02-14",
-    "id": "2ab983b7-cba2-4aaa-ac96-4c73991574f2",
-    "lastUpdated": "2026-02-26T15:43:39.140Z"
+    "dateApplied": "2026-02-15",
+    "id": "2b209224-034b-4880-9eb8-4be66db50aaa",
+    "lastUpdated": "2026-02-27T14:23:26.610Z"
   },
   {
     "company": "Vercel",
@@ -19,9 +19,9 @@
     "salaryMin": 200000,
     "salaryMax": 250000,
     "notes": "Recruiter call went well. They're interested in my Next.js experience.",
-    "dateApplied": "2026-02-18",
-    "id": "12cfd2cf-ea84-4d78-96a5-9c1db8bff56e",
-    "lastUpdated": "2026-02-26T15:43:39.140Z"
+    "dateApplied": "2026-02-19",
+    "id": "d033e226-d0e6-4154-b074-84f11daf0e01",
+    "lastUpdated": "2026-02-27T14:23:26.610Z"
   },
   {
     "company": "Linear",
@@ -31,9 +31,9 @@
     "salaryMin": 160000,
     "salaryMax": 200000,
     "notes": "Applied through referral from Alex.",
-    "dateApplied": "2026-02-23",
-    "id": "4deea075-067a-4052-9ece-460ba61fa788",
-    "lastUpdated": "2026-02-26T15:43:39.140Z"
+    "dateApplied": "2026-02-24",
+    "id": "8d83500a-470e-4a64-850c-dbbadf84cb3d",
+    "lastUpdated": "2026-02-27T14:23:26.610Z"
   },
   {
     "company": "Figma",
@@ -43,9 +43,9 @@
     "salaryMin": 170000,
     "salaryMax": 210000,
     "notes": "Onsite scheduled for next week. 4 rounds: coding, system design, behavioral, team fit.",
-    "dateApplied": "2026-02-05",
-    "id": "d9a14bf2-c3c7-4cf2-9a60-a672a1a7e315",
-    "lastUpdated": "2026-02-26T15:43:39.140Z"
+    "dateApplied": "2026-02-06",
+    "id": "1b045d56-e972-484d-9455-16c55c75200d",
+    "lastUpdated": "2026-02-27T14:23:44.922Z"
   },
   {
     "company": "Notion",
@@ -55,9 +55,9 @@
     "salaryMin": 175000,
     "salaryMax": 215000,
     "notes": "Received offer! $195k base + equity. Need to respond by Friday.",
-    "dateApplied": "2026-01-27",
-    "id": "fc2fd7cd-aa6f-4e22-9f9d-1de1db4c1145",
-    "lastUpdated": "2026-02-26T15:43:39.140Z"
+    "dateApplied": "2026-01-28",
+    "id": "4ff765dc-f787-495b-83cd-ae96fa14b665",
+    "lastUpdated": "2026-02-27T14:23:26.610Z"
   },
   {
     "company": "Airbnb",
@@ -67,9 +67,9 @@
     "salaryMin": 190000,
     "salaryMax": 240000,
     "notes": "Rejected after technical round. Feedback: needed more system design depth.",
-    "dateApplied": "2026-01-12",
-    "id": "8d36668b-0257-4136-a5cd-5733b232cfe8",
-    "lastUpdated": "2026-02-26T15:43:39.140Z"
+    "dateApplied": "2026-01-13",
+    "id": "791bdc5d-c8c4-49b7-a839-6ee546f8a79d",
+    "lastUpdated": "2026-02-27T14:23:26.610Z"
   },
   {
     "company": "Shopify",
@@ -79,9 +79,9 @@
     "salaryMin": 150000,
     "salaryMax": 190000,
     "notes": "Submitted application. Waiting to hear back.",
-    "dateApplied": "2026-02-25",
-    "id": "073a1b29-fab2-4eed-883c-19d8ef1338ac",
-    "lastUpdated": "2026-02-26T15:43:39.140Z"
+    "dateApplied": "2026-02-26",
+    "id": "5055965d-373e-4e9c-bf4d-abac4538c16b",
+    "lastUpdated": "2026-02-27T14:23:26.610Z"
   },
   {
     "company": "GitHub",
@@ -91,8 +91,8 @@
     "salaryMin": 165000,
     "salaryMax": 205000,
     "notes": "Take-home assignment completed. Waiting for feedback.",
-    "dateApplied": "2026-02-12",
-    "id": "d59a1f96-ad65-4784-965a-d697acbb5911",
-    "lastUpdated": "2026-02-26T15:43:39.140Z"
+    "dateApplied": "2026-02-13",
+    "id": "4868baf5-4bc5-4217-99ff-92f314274c36",
+    "lastUpdated": "2026-02-27T14:23:26.610Z"
   }
 ]

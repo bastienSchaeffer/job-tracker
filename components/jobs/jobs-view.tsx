@@ -1,7 +1,21 @@
+"use client";
+
+import dynamic from "next/dynamic";
 import { JobsTable } from "./jobs-table";
 import { JobList } from "./job-list";
-import { KanbanBoard } from "./kanban-board";
 import type { Job, JobsViewMode } from "@/lib/types";
+
+const KanbanBoard = dynamic(
+  () => import("./kanban-board").then((m) => ({ default: m.KanbanBoard })),
+  {
+    loading: () => (
+      <div className="flex justify-center py-12 text-muted-foreground">
+        Loading board...
+      </div>
+    ),
+    ssr: false,
+  }
+);
 
 interface JobsViewProps {
   jobs: Job[];

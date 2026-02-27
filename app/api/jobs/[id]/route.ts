@@ -13,7 +13,11 @@ export async function GET(_request: Request, { params }: RouteParams) {
     return NextResponse.json({ error: "Job not found" }, { status: 404 });
   }
 
-  return NextResponse.json(job);
+  return NextResponse.json(job, {
+    headers: {
+      "Cache-Control": "private, max-age=10, stale-while-revalidate=60",
+    },
+  });
 }
 
 export async function PUT(request: Request, { params }: RouteParams) {
